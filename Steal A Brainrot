@@ -44,69 +44,18 @@ Tab:AddToggle({
     end
 })
 
-
 local ProximityService = game:GetService("ProximityPromptService")
 
 local instantPromptEnabled = false
 
 Tab:AddToggle({
-    Name = "Instant Take",
-    Default = false,
-    Callback = function(value)
-        instantPromptEnabled = value
-        print("Instant Take", value)
-
-        -- Atur semua ProximityPrompt yang ada saat ini
-        for _, prompt in ipairs(workspace:GetDescendants()) do
-            if prompt:IsA("ProximityPrompt") then
-                prompt.HoldDuration = value and 0 or 1 -- 0 = instan, 1 = default tahan
-            end
-        end
-    end
+	Name = "Instant Take",
+	Default = false,
+	Callback = function(v)
+		InstanToggleAktif = v
+		SetAllPromptsInstant(v)
+	end
 })
-
--- Atur juga jika ada ProximityPrompt baru ditambahkan ke game
-workspace.DescendantAdded:Connect(function(descendant)
-    if descendant:IsA("ProximityPrompt") and instantPromptEnabled then
-        descendant.HoldDuration = 0
-    end
-end)
-
-
-
-
-local RunService = game:GetService("RunService")
-
-local enabled = false -- toggle awal
-
-local function triggerPrompt(prompt)
-	if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent then
-		prompt.HoldDuration = 0
-		prompt.RequiresLineOfSight = false
-		prompt:InputHoldBegin(Enum.UserInputType.Keyboard)
-		prompt:InputHoldEnd(Enum.UserInputType.Keyboard)
-	end
-end
-
--- Auto trigger jika ada prompt baru muncul
-workspace.DescendantAdded:Connect(function(descendant)
-	if enabled and descendant:IsA("ProximityPrompt") then
-		task.wait(0.1)
-		triggerPrompt(descendant)
-	end
-end)
-
--- Loop untuk trigger prompt jika aktif
-RunService.RenderStepped:Connect(function()
-	if enabled then
-		for _, prompt in pairs(workspace:GetDescendants()) do
-			if prompt:IsA("ProximityPrompt") then
-				triggerPrompt(prompt)
-			end
-		end
-	end
-end)
-
 
 Tab:AddToggle({
 	Name = "Reset Back To Base",
@@ -187,11 +136,9 @@ Tab:AddToggle({
 	end    
 })
 
+-Fungsi Instan
+local InstanToggleAktif = false
 
--- Aktifkan langsung saat script dijalankan
-local InstanToggleAktif = true
-
--- Fungsi untuk mengatur semua ProximityPrompt agar instan
 local function SetAllPromptsInstant(active)
 	for _, prompt in ipairs(game:GetDescendants()) do
 		if prompt:IsA("ProximityPrompt") then
@@ -200,10 +147,7 @@ local function SetAllPromptsInstant(active)
 	end
 end
 
--- Jalankan fungsi saat awal
-SetAllPromptsInstant(InstanToggleAktif)
-
--- Atur prompt baru yang ditambahkan ke game agar instan juga
+-- Atur ulang prompt baru yang ditambahkan ke game
 game.DescendantAdded:Connect(function(desc)
 	if desc:IsA("ProximityPrompt") and InstanToggleAktif then
 		desc.HoldDuration = 0

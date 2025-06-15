@@ -1,0 +1,190 @@
+
+Players = game:GetService("Players") 
+local LocalPlayer = Players.LocalPlayer
+-- Memuat Library Orion
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/source"))()
+-- Membuat jendela UI
+local Window = OrionLib:MakeWindow({
+    Name = "Galaxy Hub",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionTest"
+})
+-- Membuat Tab dalam UI
+local Tab = Window:MakeTab({
+    Name = "Menu",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+-- Menambahkan Section ke dalam Tab
+local Section = Tab:AddSection({
+    Name = "Enjoy For Using"
+})
+
+
+
+local running = false
+local touchThread
+local rootPart
+
+getgenv().BrainRotActive = false
+
+Tab:AddToggle({
+	Name = "Steal a Brainrot (OP)",
+    Default = false,
+    Callback = function(value)
+        getgenv().BrainRotActive = value
+        if value then
+            -- Saat toggle AKTIF
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/D4nzyXcripter/Steal-Brainrot-New/refs/heads/main/Stealing"))()
+        else
+            -- Saat toggle NONAKTIF
+            print("Toggle dimatikan. Script harus cek getgenv().BrainRotActive.")
+        end
+    end
+})
+
+
+local ProximityService = game:GetService("ProximityPromptService")
+
+local instantPromptEnabled = false
+
+Tab:AddToggle({
+    Name = "Instant Take",
+    Default = false,
+    Callback = function(value)
+        instantPromptEnabled = value
+        print("Instant Take", value)
+
+        -- Atur semua ProximityPrompt yang ada saat ini
+        for _, prompt in ipairs(workspace:GetDescendants()) do
+            if prompt:IsA("ProximityPrompt") then
+                prompt.HoldDuration = value and 0 or 1 -- 0 = instan, 1 = default tahan
+            end
+        end
+    end
+})
+
+-- Atur juga jika ada ProximityPrompt baru ditambahkan ke game
+workspace.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("ProximityPrompt") and instantPromptEnabled then
+        descendant.HoldDuration = 0
+    end
+end)
+
+
+
+
+local RunService = game:GetService("RunService")
+
+local enabled = false -- toggle awal
+
+local function triggerPrompt(prompt)
+	if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent then
+		prompt.HoldDuration = 0
+		prompt.RequiresLineOfSight = false
+		prompt:InputHoldBegin(Enum.UserInputType.Keyboard)
+		prompt:InputHoldEnd(Enum.UserInputType.Keyboard)
+	end
+end
+
+-- Auto trigger jika ada prompt baru muncul
+workspace.DescendantAdded:Connect(function(descendant)
+	if enabled and descendant:IsA("ProximityPrompt") then
+		task.wait(0.1)
+		triggerPrompt(descendant)
+	end
+end)
+
+-- Loop untuk trigger prompt jika aktif
+RunService.RenderStepped:Connect(function()
+	if enabled then
+		for _, prompt in pairs(workspace:GetDescendants()) do
+			if prompt:IsA("ProximityPrompt") then
+				triggerPrompt(prompt)
+			end
+		end
+	end
+end)
+
+
+Tab:AddToggle({
+	Name = "Reset (invisible)",
+	Default = false,
+	Callback = function(v)
+		print("Invisible:", v)
+		if v == true then
+			local player = game.Players.LocalPlayer
+			local character = player.Character or player.CharacterAdded:Wait()
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			
+			if humanoid then
+				humanoid.Health = 0 -- Langsung mengurangi darah sampai 0
+			end
+		end
+	end
+})
+
+
+local noclipConnection
+Tab:AddToggle({
+	Name = "Noclip",
+	Default = false,
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+		local character = player.Character or player.CharacterAdded:Wait()
+		if Value then
+			noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+				character = player.Character or player.CharacterAdded:Wait()
+				for _, part in pairs(character:GetDescendants()) do
+					if part:IsA("BasePart") and part.CanCollide == true then
+						part.CanCollide = false
+					end
+				end
+			end)
+		else
+			if noclipConnection then
+				noclipConnection:Disconnect()
+				noclipConnection = nil
+			end
+			character = player.Character or player.CharacterAdded:Wait()
+			for _, part in pairs(character:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.CanCollide = true
+				end
+			end
+		end
+	end
+})
+local speedLoop = nil
+Tab:AddToggle({
+	Name = "Speed 80",
+	Default = false,
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+		if Value then
+			speedLoop = task.spawn(function()
+				while true do
+					local character = player.Character or player.CharacterAdded:Wait()
+					local humanoid = character:FindFirstChild("Humanoid")
+					if humanoid then
+						humanoid.WalkSpeed = 80
+					end
+					task.wait(0.1) -- Delay kecil agar tidak terlalu berat
+				end
+			end)
+		else
+			if speedLoop then
+				task.cancel(speedLoop)
+				speedLoop = nil
+			end
+			local character = player.Character or player.CharacterAdded:Wait()
+			local humanoid = character:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid.WalkSpeed = 25
+			end
+		end
+	end    
+})
+
+

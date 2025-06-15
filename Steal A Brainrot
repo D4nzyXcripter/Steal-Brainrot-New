@@ -45,7 +45,7 @@ Tab:AddToggle({
 })
 
 -- Tambahkan Beberapa Toogle
-local InstanToggleAktif = false
+local InstanToggleAktif = true
 
 local function SetAllPromptsInstant(active)
 	for _, prompt in ipairs(game:GetDescendants()) do

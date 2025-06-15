@@ -109,7 +109,7 @@ end)
 
 
 Tab:AddToggle({
-	Name = "Reset (invisible)",
+	Name = "Reset Back To Base",
 	Default = false,
 	Callback = function(v)
 		print("Invisible:", v)

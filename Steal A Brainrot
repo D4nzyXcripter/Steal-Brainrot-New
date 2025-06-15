@@ -188,3 +188,24 @@ Tab:AddToggle({
 })
 
 
+-- Aktifkan langsung saat script dijalankan
+local InstanToggleAktif = true
+
+-- Fungsi untuk mengatur semua ProximityPrompt agar instan
+local function SetAllPromptsInstant(active)
+	for _, prompt in ipairs(game:GetDescendants()) do
+		if prompt:IsA("ProximityPrompt") then
+			prompt.HoldDuration = active and 0 or 1
+		end
+	end
+end
+
+-- Jalankan fungsi saat awal
+SetAllPromptsInstant(InstanToggleAktif)
+
+-- Atur prompt baru yang ditambahkan ke game agar instan juga
+game.DescendantAdded:Connect(function(desc)
+	if desc:IsA("ProximityPrompt") and InstanToggleAktif then
+		desc.HoldDuration = 0
+	end
+end)

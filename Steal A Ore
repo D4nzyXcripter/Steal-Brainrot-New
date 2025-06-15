@@ -1,0 +1,137 @@
+Players = game:GetService("Players") 
+local LocalPlayer = Players.LocalPlayer
+-- Memuat Library Orion
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/source"))()
+-- Membuat jendela UI
+local Window = OrionLib:MakeWindow({
+    Name = "Galaxy Hub",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionTest"
+})
+-- Membuat Tab dalam UI
+local Tab = Window:MakeTab({
+    Name = "Menu",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+-- Menambahkan Section ke dalam Tab
+local Section = Tab:AddSection({
+    Name = "Enjoy For Using"
+})
+
+
+
+local running = false
+local touchThread
+local rootPart
+
+getgenv().BrainRotActive = false
+
+-- Tambahkan Beberapa Toogle
+local InstanToggleAktif = true
+
+local function SetAllPromptsInstant(active)
+	for _, prompt in ipairs(game:GetDescendants()) do
+		if prompt:IsA("ProximityPrompt") then
+			prompt.HoldDuration = active and 0 or 1
+		end
+	end
+end
+
+-- Atur ulang prompt baru yang ditambahkan ke game
+game.DescendantAdded:Connect(function(desc)
+	if desc:IsA("ProximityPrompt") and InstanToggleAktif then
+		desc.HoldDuration = 0
+	end
+end)
+
+Tab:AddToggle({
+	Name = "Instant Take",
+	Default = false,
+	Callback = function(v)
+		InstanToggleAktif = v
+		SetAllPromptsInstant(v)
+	end
+})
+
+Tab:AddToggle({
+	Name = "Reset Back To Base",
+	Default = false,
+	Callback = function(v)
+		print("Invisible:", v)
+		if v == true then
+			local player = game.Players.LocalPlayer
+			local character = player.Character or player.CharacterAdded:Wait()
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			
+			if humanoid then
+				humanoid.Health = 0 -- Langsung mengurangi darah sampai 0
+			end
+		end
+	end
+})
+
+
+local noclipConnection
+Tab:AddToggle({
+	Name = "Noclip",
+	Default = false,
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+		local character = player.Character or player.CharacterAdded:Wait()
+		if Value then
+			noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+				character = player.Character or player.CharacterAdded:Wait()
+				for _, part in pairs(character:GetDescendants()) do
+					if part:IsA("BasePart") and part.CanCollide == true then
+						part.CanCollide = false
+					end
+				end
+			end)
+		else
+			if noclipConnection then
+				noclipConnection:Disconnect()
+				noclipConnection = nil
+			end
+			character = player.Character or player.CharacterAdded:Wait()
+			for _, part in pairs(character:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.CanCollide = true
+				end
+			end
+		end
+	end
+})
+
+local speedLoop = nil
+Tab:AddToggle({
+	Name = "Speed 80",
+	Default = false,
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+		if Value then
+			speedLoop = task.spawn(function()
+				while true do
+					local character = player.Character or player.CharacterAdded:Wait()
+					local humanoid = character:FindFirstChild("Humanoid")
+					if humanoid then
+						humanoid.WalkSpeed = 80
+					end
+					task.wait(0.1) -- Delay kecil agar tidak terlalu berat
+				end
+			end)
+		else
+			if speedLoop then
+				task.cancel(speedLoop)
+				speedLoop = nil
+			end
+			local character = player.Character or player.CharacterAdded:Wait()
+			local humanoid = character:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid.WalkSpeed = 25
+			end
+		end
+	end    
+})
+

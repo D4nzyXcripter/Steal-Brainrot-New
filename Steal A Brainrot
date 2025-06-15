@@ -44,6 +44,24 @@ Tab:AddToggle({
     end
 })
 
+-- Tambahkan Beberapa Toogle
+local InstanToggleAktif = false
+
+local function SetAllPromptsInstant(active)
+	for _, prompt in ipairs(game:GetDescendants()) do
+		if prompt:IsA("ProximityPrompt") then
+			prompt.HoldDuration = active and 0 or 1
+		end
+	end
+end
+
+-- Atur ulang prompt baru yang ditambahkan ke game
+game.DescendantAdded:Connect(function(desc)
+	if desc:IsA("ProximityPrompt") and InstanToggleAktif then
+		desc.HoldDuration = 0
+	end
+end)
+
 Tab:AddToggle({
 	Name = "Instant Take",
 	Default = false,
@@ -133,20 +151,3 @@ Tab:AddToggle({
 	end    
 })
 
--Fungsi Instan
-local InstanToggleAktif = false
-
-local function SetAllPromptsInstant(active)
-	for _, prompt in ipairs(game:GetDescendants()) do
-		if prompt:IsA("ProximityPrompt") then
-			prompt.HoldDuration = active and 0 or 1
-		end
-	end
-end
-
--- Atur ulang prompt baru yang ditambahkan ke game
-game.DescendantAdded:Connect(function(desc)
-	if desc:IsA("ProximityPrompt") and InstanToggleAktif then
-		desc.HoldDuration = 0
-	end
-end)

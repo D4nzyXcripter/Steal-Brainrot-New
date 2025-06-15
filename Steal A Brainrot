@@ -44,10 +44,6 @@ Tab:AddToggle({
     end
 })
 
-local ProximityService = game:GetService("ProximityPromptService")
-
-local instantPromptEnabled = false
-
 Tab:AddToggle({
 	Name = "Instant Take",
 	Default = false,
@@ -105,6 +101,7 @@ Tab:AddToggle({
 		end
 	end
 })
+
 local speedLoop = nil
 Tab:AddToggle({
 	Name = "Speed 80",

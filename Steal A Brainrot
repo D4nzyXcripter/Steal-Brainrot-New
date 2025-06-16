@@ -4,7 +4,7 @@ local LocalPlayer = Players.LocalPlayer
 local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/source"))()
 -- Membuat jendela UI
 local Window = OrionLib:MakeWindow({
-    Name = "D4nzy Hub",
+    Name = "⟬ D4nzy Hub ⟭",
     HidePremium = false,
     SaveConfig = true,
     ConfigFolder = "OrionTest"
@@ -17,7 +17,7 @@ local Tab = Window:MakeTab({
 })
 -- Membuat Tab2 Untuk Visuality
 local Tab2 = Window:MakeTab({
-    Name = "Visual",
+    Name = "Visual / Any Game",
     Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
@@ -54,7 +54,7 @@ game.DescendantAdded:Connect(function(desc)
 end)
 
 Tab:AddToggle({
-	Name = "Instant Take",
+	Name = "🫱🏻 Instant Take",
 	Default = false,
 	Callback = function(v)
 		InstanToggleAktif = v
@@ -63,7 +63,7 @@ Tab:AddToggle({
 })
 
 Tab:AddToggle({
-	Name = "Reset Back To Base",
+	Name = "🥀 Reset Back To Base",
 	Default = false,
 	Callback = function(v)
 		print("Invisible:", v)
@@ -80,18 +80,19 @@ Tab:AddToggle({
 })
 
 
-local noclipConnection
+local noclipConnection = nil
 Tab:AddToggle({
-	Name = "Noclip",
+	Name = "🚪 Noclip",
 	Default = false,
 	Callback = function(Value)
 		local player = game.Players.LocalPlayer
 		local character = player.Character or player.CharacterAdded:Wait()
+
 		if Value then
 			noclipConnection = game:GetService("RunService").Stepped:Connect(function()
 				character = player.Character or player.CharacterAdded:Wait()
 				for _, part in pairs(character:GetDescendants()) do
-					if part:IsA("BasePart") and part.CanCollide == true then
+					if part:IsA("BasePart") and part.CanCollide then
 						part.CanCollide = false
 					end
 				end
@@ -113,7 +114,7 @@ Tab:AddToggle({
 
 local speedLoop = nil
 Tab:AddToggle({
-	Name = "Speed 30",
+	Name = "⚡ Speed 30",
 	Default = false,
 	Callback = function(Value)
 		local player = game.Players.LocalPlayer
@@ -192,4 +193,35 @@ Tab2:AddToggle({
 			end
 		end
 	end
+})
+
+local speedLoop = nil
+Tab2:AddToggle({
+	Name = "⚡ Speed 50 (any game)",
+	Default = false,
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+		if Value then
+			speedLoop = task.spawn(function()
+				while true do
+					local character = player.Character or player.CharacterAdded:Wait()
+					local humanoid = character:FindFirstChild("Humanoid")
+					if humanoid then
+						humanoid.WalkSpeed = 50
+					end
+					task.wait(0.1) -- Delay kecil agar tidak terlalu berat
+				end
+			end)
+		else
+			if speedLoop then
+				task.cancel(speedLoop)
+				speedLoop = nil
+			end
+			local character = player.Character or player.CharacterAdded:Wait()
+			local humanoid = character:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid.WalkSpeed = 25
+			end
+		end
+	end    
 })

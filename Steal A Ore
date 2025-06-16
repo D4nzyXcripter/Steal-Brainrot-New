@@ -106,7 +106,7 @@ Tab:AddToggle({
 
 local speedLoop = nil
 Tab:AddToggle({
-	Name = "Speed 80",
+	Name = "Speed 50",
 	Default = false,
 	Callback = function(Value)
 		local player = game.Players.LocalPlayer
@@ -116,7 +116,7 @@ Tab:AddToggle({
 					local character = player.Character or player.CharacterAdded:Wait()
 					local humanoid = character:FindFirstChild("Humanoid")
 					if humanoid then
-						humanoid.WalkSpeed = 80
+						humanoid.WalkSpeed = 50
 					end
 					task.wait(0.1) -- Delay kecil agar tidak terlalu berat
 				end

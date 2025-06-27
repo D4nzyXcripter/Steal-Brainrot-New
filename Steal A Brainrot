@@ -54,21 +54,6 @@ game.DescendantAdded:Connect(function(desc)
 end)
 
 Tab:AddToggle({
-    Name = "Steal a Brainrot (OP)",
-    Default = false,
-    Callback = function(value)
-        getgenv().BrainRotActive = value
-        if value then
-            -- Saat toggle AKTIF
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/D4nzyXcripter/Steal-Brainrot-New/refs/heads/main/Steal%20To%20Claim.lua"))()
-        else
-            -- Saat toggle NONAKTIF
-            print("Toggle dimatikan. Script harus cek getgenv().BrainRotActive.")
-        end
-    end
-})
-
-Tab:AddToggle({
 	Name = "Instant Take",
 	Default = false,
 	Callback = function(v)
@@ -128,7 +113,7 @@ Tab:AddToggle({
 
 local speedLoop = nil
 Tab:AddToggle({
-	Name = "Speed 30",
+	Name = "Speed 50",
 	Default = false,
 	Callback = function(Value)
 		local player = game.Players.LocalPlayer
@@ -138,7 +123,7 @@ Tab:AddToggle({
 					local character = player.Character or player.CharacterAdded:Wait()
 					local humanoid = character:FindFirstChild("Humanoid")
 					if humanoid then
-						humanoid.WalkSpeed = 30
+						humanoid.WalkSpeed = 50
 					end
 					task.wait(0.1) -- Delay kecil agar tidak terlalu berat
 				end

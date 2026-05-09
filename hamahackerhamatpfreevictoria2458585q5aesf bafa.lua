@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 
 local blacklist = {
     ["VIP_Jeprl"] = "laper hama tolol musang ngaku admin",
-    ["fansberatewindah"] = "tes akun2",
+    ["gada"] = "tes akun2",
     ["toxic_kid"] = "toxic behavior",
 }
 

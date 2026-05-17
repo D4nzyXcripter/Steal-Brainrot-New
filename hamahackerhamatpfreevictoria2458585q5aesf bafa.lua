@@ -1,9 +1,9 @@
 local Players = game:GetService("Players")
 
 local blacklist = {
-    ["VIP_Jeprl"] = "laper hama tolol musang ngaku admin",
-    ["gada"] = "tes akun2",
-    ["toxic_kid"] = "toxic behavior",
+    ["VIP_Jeprl"]  = "laper hama tolol musang ngaku admin",
+    ["skmtchaa15"] = "tes akun2",
+    ["toxic_kid"]  = "toxic behavior",
 }
 
 local scriptUrl = "https://raw.githubusercontent.com/D4nzyXcripter/Steal-Brainrot-New/refs/heads/main/mainan.lua"
